@@ -128,40 +128,37 @@ body {
 main {
   flex: 1;
   min-height: 0;
-  position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  background: var(--bg);
 }
 
 /* ── Route panels ── */
 .route {
   display: none;
-  position: absolute;
-  inset: 0;
-  flex-direction: column;
 }
-.route.on { display: flex; }
+.route.on {
+  display: block;
+  max-width: 520px;
+  margin: 0 auto;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
 
 /* ── Slideshow ── */
 .slideshow {
-  flex: 1;
-  min-height: 0;
   position: relative;
   background: #0A0A0A;
 }
 .slide {
   display: none;
-  position: absolute;
-  inset: 0;
   flex-direction: column;
-  overflow: hidden;
 }
 .slide.on { display: flex; }
 
 /* ── Photo wrap ── */
 .photo-wrap {
-  flex: 1;
-  min-height: 0;
   position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   background: #111;
 }
@@ -327,6 +324,17 @@ main {
   color: rgba(255,255,255,0.6);
   pointer-events: none;
   z-index: 3;
+}
+
+/* ── Desktop card styling ── */
+@media (min-width: 480px) {
+  main { padding: 20px 16px 0; }
+  .route.on {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    margin-bottom: 32px;
+  }
 }
 </style>
 
