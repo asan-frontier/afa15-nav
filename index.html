@@ -1,0 +1,532 @@
+<title>행사장 길 안내</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+
+<style>
+/* Layout: sticky header + full-bleed photo slideshow with arrow overlays */
+:root {
+  --navy:    #1A3966;
+  --navy-d:  #122844;
+  --arrow:   #FF3528;
+  --dest:    #28C659;
+  --bg:      #F2F1EE;
+  --surface: #FFFFFF;
+  --fg:      #1A1A1A;
+  --muted:   #6A6A6A;
+  --border:  #E0DFDB;
+  --tab-h:   52px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:      #111110;
+    --surface: #1E1E1C;
+    --fg:      #EDEDE8;
+    --muted:   #9A9994;
+    --border:  #2E2E2B;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:      #111110;
+  --surface: #1E1E1C;
+  --fg:      #EDEDE8;
+  --muted:   #9A9994;
+  --border:  #2E2E2B;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: none;
+}
+
+/* ── Header ── */
+.hd {
+  background: var(--navy);
+  color: white;
+  flex-shrink: 0;
+}
+.hd-cover {
+  padding: 18px max(16px, env(safe-area-inset-left,0px)) 14px;
+  padding-left: max(16px, env(safe-area-inset-left,0px));
+  padding-right: max(16px, env(safe-area-inset-right,0px));
+  text-align: center;
+}
+.hd-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 5px;
+}
+.hd-title {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.hd-date {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 4px;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-left: max(0px, env(safe-area-inset-left,0px));
+  padding-right: max(0px, env(safe-area-inset-right,0px));
+}
+.tab {
+  flex: 1;
+  height: var(--tab-h);
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.45);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  position: relative;
+  transition: color 0.15s;
+  letter-spacing: 0.01em;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab.on { color: white; }
+.tab.on::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 15%; right: 15%;
+  height: 2.5px;
+  background: white;
+  border-radius: 2px 2px 0 0;
+}
+.tab-sub {
+  font-size: 9px;
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+/* ── Main ── */
+main {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Route panels ── */
+.route {
+  display: none;
+  position: absolute;
+  inset: 0;
+  flex-direction: column;
+}
+.route.on { display: flex; }
+
+/* ── Slideshow ── */
+.slideshow {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: #0A0A0A;
+}
+.slide {
+  display: none;
+  position: absolute;
+  inset: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+.slide.on { display: flex; }
+
+/* ── Photo wrap ── */
+.photo-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  background: #111;
+}
+.photo-wrap img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Arrow overlay ── */
+.arrow-wrap {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  /* left/top set inline */
+}
+.arrow-wrap svg {
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+}
+
+/* ── Step badge ── */
+.step-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  background: var(--navy-d);
+  color: white;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  z-index: 2;
+}
+
+/* ── Dest badge ── */
+.dest-badge {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+.dest-ring {
+  width: 80px; height: 80px;
+  background: rgba(0,0,0,0.55);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+/* ── Caption strip ── */
+.caption {
+  flex-shrink: 0;
+  background: var(--surface);
+  padding: 14px max(16px, env(safe-area-inset-right,0px)) 12px max(16px, env(safe-area-inset-left,0px));
+  border-top: 1px solid var(--border);
+  min-height: 90px;
+}
+.cap-landmark {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.cap-inst {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--fg);
+  text-wrap: balance;
+}
+.cap-inst.dest-text { color: var(--dest); }
+.cap-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
+/* ── Progress dots ── */
+.dots {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px 6px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s, transform 0.2s, width 0.2s;
+  flex-shrink: 0;
+}
+.dot.on { background: var(--navy); transform: scale(1.3); }
+
+/* ── Nav bar ── */
+.nav-bar {
+  flex-shrink: 0;
+  display: flex;
+  gap: 10px;
+  padding: 10px max(16px, env(safe-area-inset-right,0px)) max(14px, calc(env(safe-area-inset-bottom,0px) + 10px));
+  padding-left: max(16px, env(safe-area-inset-left,0px));
+  background: var(--surface);
+}
+.nav-btn {
+  height: 46px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.nav-btn:active { transform: scale(0.97); }
+.nav-btn:disabled { opacity: 0.25; cursor: default; }
+.nav-btn:disabled:active { transform: none; }
+.btn-prev {
+  flex: 0 0 100px;
+  background: var(--bg);
+  color: var(--fg);
+}
+.btn-next {
+  flex: 1;
+  background: var(--navy);
+  color: white;
+}
+.btn-next.dest-btn {
+  background: var(--dest);
+}
+
+/* ── Swipe hint ── */
+.swipe-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.6);
+  pointer-events: none;
+  z-index: 3;
+}
+</style>
+
+<div class="hd">
+  <div class="hd-cover">
+    <div class="hd-title">아산 프론티어 아카데미 15기 수료식<br>아산정책연구원↔팜시티테이블<br>도보 이동 경로 안내</div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" data-route="r1" onclick="switchRoute('r1')">
+      아산정책연구원→팜시티테이블
+    </button>
+    <button class="tab" data-route="r2" onclick="switchRoute('r2')">
+      팜시티테이블 주차장→아산정책연구원
+    </button>
+  </div>
+</div>
+
+<main id="main"></main>
+
+<script>
+/* ── Route data ── */
+const ROUTES = [
+  {
+    id: 'r1',
+    steps: [
+      { img:'photos/r1_00.jpg', landmark:'STEP 1 · 아산정책연구원 출입구', inst:'아산정책연구원 출입구 골목 직진', sub:'양쪽에 차가 주차된 좁은 골목을 따라 직진하세요.', dir:'up', ax:50, ay:45 },
+      { img:'photos/r1_04.jpg', landmark:'STEP 2 · U자형 삼거리', inst:'U자형 삼거리에서 왼쪽으로', sub:'도로가 U자형으로 굽어지는 삼거리에서 왼쪽 방향으로 꺾은 후 직진하세요.', dir:'left', ax:25, ay:52 },
+      { img:'photos/r1_08.jpg', landmark:'STEP 3 · 경희궁1가 삼거리', inst:'「진입금지」표시에서 오른쪽 골목으로', sub:'도로 바닥에 \"진입금지\" 글씨가 보이면 오른쪽 골목으로 꺾으세요. 보행자는 통과 가능해요.', dir:'right', ax:72, ay:50 },
+      { img:'photos/r1_11.jpg', landmark:'STEP 4 · Gallery Marie', inst:'Gallery Marie 현수막 지나 직진', sub:'왼쪽 기둥에 Gallery Marie 노란 현수막이 보이면 그대로 직진하세요. 길 끝에 다다르면 좌회전하세요.', dir:'up', ax:48, ay:80 },
+      { img:'photos/r1_13.jpg', landmark:'STEP 5 · 성곡미술관 · 마라 앞', inst:'그대로 직진', sub:'왼쪽에 \"마라\" 한식당, 오른쪽에 \"성곡미술관\" 사인탑이 보이면 그 길로 직진하세요.', dir:'up', ax:35, ay:78 },
+      { img:'photos/r1_14.jpg', landmark:'STEP 6 · KFA 축구회관', inst:'KFA 간판 옆 직진 → 길 끝에서 좌회전', sub:'오른쪽에 분홍색 \"KFA 축구회관\" 간판이 보이면 직진하세요. 길 끝에 도달하면 좌회전 하세요.', dir:'up', ax:42, ay:78 },
+      { img:'photos/r1_16.jpg', landmark:'STEP 7 · 경희궁로 사거리', inst:'왼쪽으로 꺾어 횡단보도 건너기', sub:'길 끝에서 왼쪽으로 좌회전 하면 됩니다. 사진 속 가로 횡단보도를 건너세요.', dir:'left', ax:20, ay:68 },
+      { img:'photos/r1_21.jpg', landmark:'STEP 8 · 보행자 경사로 입구', inst:'왼쪽 보행자 경사로로 올라가기', sub:'차도와 갈라지는 갈림길에서 왼쪽 보행자 오르막 경사로를 선택해 올라가세요. 오른쪽 차도로 가지 마세요.', dir:'up', ax:28, ay:78 },
+      { img:'photos/r1_23.jpg', landmark:'STEP 9 · 보행자 통로', inst:'돌담 옆 길 직진', sub:'돌담 옆 보행자 통로를 따라 직진하면 곧 도착이에요.', dir:'up', ax:50, ay:70 },
+      { img:'photos/r1_24.jpg', landmark:'도착', inst:'팜시티테이블 도착!', sub:'팜시티 테이블 현수막이 걸린 건물이 보이면 도착입니다. 🎉', dir:'dest', ax:50, ay:50 },
+    ]
+  },
+  {
+    id: 'r2',
+    steps: [
+      { img:'photos/r2_00.jpg', landmark:'STEP 1 · 팜시티 주차장 출구', inst:'차단기 지나 오른쪽 경사로로', sub:'차단기를 지나면 경사로가 오른쪽으로 굽어지며 내려갑니다. 경사로를 따라 내려가세요.', dir:'right', ax:65, ay:42 },
+      { img:'photos/r2_01.jpg', landmark:'STEP 2 · 팜시티 경사로', inst:'경사로 따라 내려가기', sub:'경사로를 따라 내려가세요.', dir:'up', ax:57, ay:70, rot:10 },
+      { img:'photos/r2_03.jpg', landmark:'STEP 3 · 경희궁로 교차로', inst:'노란 기둥 끼고 오른쪽으로', sub:'경사로를 내려와 사거리에 도달하면 오른쪽 노란 기둥을 끼고 우회전 하세요.', dir:'right', ax:72, ay:55 },
+      { img:'photos/r2_04.jpg', landmark:'STEP 4 · 파나마 대사관 앞', inst:'파나마 대사관 지나 직진 오르기', sub:'오른쪽 건물에 파나마 대사관(Embassy of Panama) 현판이 보이면 직진해서 올라가세요.', dir:'up', ax:50, ay:65, rot:20 },
+      { img:'photos/r2_06.jpg', landmark:'STEP 5 · KFA 축구회관', inst:'KFA 축구회관 지나 직진', sub:'진행 방향 왼편에 위치한 KFA 축구회관을 지나 직진하세요.', dir:'up', ax:50, ay:75 },
+      { img:'photos/r2_07.jpg', landmark:'STEP 6 · 성곡미술관 · 마라 앞', inst:'마라 식당을 끼고 우회전', sub:'왼쪽에 \"성곡미술관\" 사인탑, 오른쪽에 \"마라\" 한식당이 보이면 식당을 끼고 우회전하세요.', dir:'right', ax:72, ay:55 },
+      { img:'photos/r2_09.jpg', landmark:'STEP 7 · 일방통행 골목', inst:'일방통행 골목 직진', sub:'우회전 후 골목을 따라 길 끝까지 직진하세요.', dir:'up', ax:50, ay:75 },
+      { img:'photos/r2_new8.jpg', landmark:'STEP 8 · 직진', inst:'도로 직진', sub:'길의 끝에서 우회전 후 골목을 따라 쭉 직진하세요.', dir:'up', ax:50, ay:75, rot:-15 },
+      { img:'photos/r2_14.jpg', landmark:'STEP 9 · 삼거리', inst:'U자형 삼거리에서 우회전', sub:'주황색 볼라드가 오른쪽을 막은 삼거리에서 우회전해서 꺾어 올라가세요.', dir:'right', ax:72, ay:40 },
+      { img:'photos/r2_15.jpg', landmark:'STEP 10 · 아산정책연구원 100m', inst:'표지판 따라 직진', sub:'아산정책연구원 ↑ 100m 표지판이 보이면 그대로 직진해서 올라가세요. 거의 다 왔어요!', dir:'up', ax:45, ay:75 },
+      { img:'photos/r2_18.jpg', landmark:'도착', inst:'아산정책연구원 도착!', sub:'정면에 금색 \"아산정책연구원\" 현판이 보이면 맞아요. 정문으로 들어가세요 🎉', dir:'dest', ax:50, ay:50 },
+    ]
+  }
+];
+
+/* ── Arrow SVG builder ── */
+function arrowSVG(dir) {
+  if (dir === 'dest') {
+    return `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="40" r="34" fill="rgba(0,0,0,0.6)"/>
+      <circle cx="40" cy="40" r="34" stroke="white" stroke-width="3" stroke-opacity="0.3"/>
+      <path d="M24 40 L35 52 L57 28" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M24 40 L35 52 L57 28" stroke="#28C659" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  }
+
+  /* Path data per direction */
+  const paths = {
+    up:    'M40 68 L40 18 M20 38 L40 18 L60 38',
+    down:  'M40 12 L40 62 M20 42 L40 62 L60 42',
+    right: 'M14 40 L64 40 M44 20 L64 40 L44 60',
+    left:  'M66 40 L16 40 M36 20 L16 40 L36 60',
+  };
+  const d = paths[dir] || paths.up;
+
+  return `<svg width="90" height="90" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="${d}" stroke="white" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${d}" stroke="#FF3528" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+/* ── Render routes ── */
+const main = document.getElementById('main');
+let routeStates = {}; /* { r1: 0, r2: 0 } */
+
+ROUTES.forEach(route => {
+  routeStates[route.id] = 0;
+
+  const panel = document.createElement('div');
+  panel.className = 'route' + (route.id === 'r1' ? ' on' : '');
+  panel.id = 'panel-' + route.id;
+
+  /* Slideshow */
+  const ss = document.createElement('div');
+  ss.className = 'slideshow';
+
+  route.steps.forEach((step, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'slide' + (i === 0 ? ' on' : '');
+    slide.id = `${route.id}-slide-${i}`;
+
+    const dest = step.dir === 'dest';
+
+    slide.innerHTML = `
+      <div class="photo-wrap" id="pw-${route.id}-${i}">
+        <img src="${step.img}" alt="${step.landmark}" draggable="false" loading="${i === 0 ? 'eager' : 'lazy'}">
+        <div class="step-badge">${dest ? '✓' : `${i+1} / ${route.steps.length}`}</div>
+        ${dest
+          ? `<div class="dest-badge"><div class="dest-ring">${arrowSVG('dest')}</div></div>`
+          : `<div class="arrow-wrap" style="left:${step.ax}%;top:${step.ay}%;transform:translate(-50%,-50%)${step.rot?' rotate('+step.rot+'deg)':''}">${arrowSVG(step.dir)}</div>`
+        }
+      </div>
+      <div class="caption${dest ? ' dest' : ''}">
+        <div class="cap-landmark">${step.landmark}</div>
+        <div class="cap-inst${dest ? ' dest-text' : ''}">${step.inst}</div>
+        <div class="cap-sub">${step.sub}</div>
+      </div>
+    `;
+    ss.appendChild(slide);
+  });
+
+  panel.appendChild(ss);
+
+  /* Dots */
+  const dotsDiv = document.createElement('div');
+  dotsDiv.className = 'dots';
+  dotsDiv.id = 'dots-' + route.id;
+  route.steps.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    dotsDiv.appendChild(d);
+  });
+  panel.appendChild(dotsDiv);
+
+  /* Nav bar */
+  const nav = document.createElement('div');
+  nav.className = 'nav-bar';
+  nav.innerHTML = `
+    <button class="nav-btn btn-prev" id="prev-${route.id}" onclick="go('${route.id}',-1)" disabled>‹ 이전</button>
+    <button class="nav-btn btn-next" id="next-${route.id}" onclick="go('${route.id}',1)">다음 ›</button>
+  `;
+  panel.appendChild(nav);
+
+  main.appendChild(panel);
+
+  /* Touch/swipe */
+  let tx = 0;
+  ss.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  ss.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) go(route.id, dx < 0 ? 1 : -1);
+  }, { passive: true });
+});
+
+function go(routeId, delta) {
+  const route = ROUTES.find(r => r.id === routeId);
+  const cur = routeStates[routeId];
+  const next = Math.max(0, Math.min(route.steps.length - 1, cur + delta));
+  if (next === cur) return;
+
+  /* Hide current */
+  document.getElementById(`${routeId}-slide-${cur}`).classList.remove('on');
+  /* Show next */
+  document.getElementById(`${routeId}-slide-${next}`).classList.add('on');
+
+  /* Update dots */
+  const dots = document.querySelectorAll(`#dots-${routeId} .dot`);
+  dots[cur].classList.remove('on');
+  dots[next].classList.add('on');
+
+  /* Update buttons */
+  document.getElementById(`prev-${routeId}`).disabled = next === 0;
+  const nextBtn = document.getElementById(`next-${routeId}`);
+  const isLast = next === route.steps.length - 1;
+  nextBtn.textContent = isLast ? '처음으로' : '다음 ›';
+  nextBtn.className = 'nav-btn btn-next' + (isLast ? ' dest-btn' : '');
+  if (isLast) {
+    nextBtn.onclick = () => go(routeId, -(route.steps.length - 1));
+  } else {
+    nextBtn.onclick = () => go(routeId, 1);
+  }
+
+  routeStates[routeId] = next;
+}
+
+function switchRoute(id) {
+  /* Tabs */
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('on', t.dataset.route === id);
+  });
+  /* Panels */
+  document.querySelectorAll('.route').forEach(p => {
+    p.classList.toggle('on', p.id === 'panel-' + id);
+  });
+}
+
+/* Keyboard nav */
+document.addEventListener('keydown', e => {
+  const activeId = document.querySelector('.route.on')?.id.replace('panel-', '');
+  if (!activeId) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(activeId, 1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(activeId, -1);
+});
+</script>
