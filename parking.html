@@ -352,7 +352,7 @@ const ROUTES = [
       { img:'photos/p3_b1_lobby.jpg', landmark:'STEP 5 · B1 로비', inst:'가운데 유리문으로 나가기', sub:'오른쪽으로 돌면 보이는 로비입니다. 정면 가운데 유리문으로 나가면 건물 밖입니다.', dir:'up', ax:57, ay:78 },
       { img:'photos/w6_gate.webp', landmark:'STEP 6 · 입간판 있는 철문 앞', inst:'왼쪽 계단 올라와서 직진', sub:'건물 밖 왼쪽 계단을 올라온 뒤, 이 길을 따라 내려가세요. 사진은 올라가는 방향에서 찍은 모습입니다.', dir:'down', ax:45, ay:78 },
       { img:'photos/w5_shutter.webp', landmark:'STEP 7 · 알록달록 셔터', inst:'셔터 지나 계속 내려가기', sub:'알록달록한 셔터가 보이는 길을 지나 계속 내려가세요.', dir:'down', ax:50, ay:78 },
-      { img:'photos/w4_stairs_house.webp', landmark:'STEP 8 · 돌 조각 계단 집', inst:'계단 있는 집 지나 내려가기', sub:'돌 조각이 놓인 계단 앞을 지나 계속 내려가세요.', dir:'down35', ax:50, ay:78 },
+      { img:'photos/w4_stairs_house.webp', landmark:'STEP 8 · 돌 조각 계단 집', inst:'계단 있는 집 지나 내려가기', sub:'돌 조각이 놓인 계단 앞을 지나 계속 내려가세요.', dir:'down', ax:50, ay:78 },
       { img:'photos/w3_sajegwan.webp', landmark:'STEP 9 · 세종로성당 사제관', inst:'사제관 지나 내려가기', sub:'\"세종로성당 사제관\" 건물을 지나 계속 내려가세요.', dir:'down', ax:50, ay:78 },
       { img:'photos/w1_yeonguwon.webp', landmark:'도착', inst:'아산정책연구원 도착!', sub:'길의 왼편에 아산정책연구원 건물이 있습니다. 사진에 보이는 건물 입구로 입장해 주세요.', dir:'dest' },
     ]
@@ -376,9 +376,7 @@ function arrowSVG(dir) {
     up:    'M40 68 L40 18 M20 38 L40 18 L60 38',
     down:  'M40 12 L40 62 M20 42 L40 62 L60 42',
     right: 'M14 40 L64 40 M44 20 L64 40 L44 60',
-    left:  'M66 40 L16 40 M36 20 L16 40 L36 60',
-    down35: 'M68.7 21 L40 62 M20 42 L40 62 L60 42',
-  };
+    left:  'M66 40 L16 40 M36 20 L16 40 L36 60',  };
   const d = paths[dir] || paths.up;
 
   return `<svg width="90" height="90" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
