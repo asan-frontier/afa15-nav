@@ -1,12 +1,11 @@
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>연구원에서 팜시티테이블</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+
 <style>
+/* Layout: sticky header + full-bleed photo slideshow with arrow overlays */
 :root {
   --navy:    #1A3966;
   --navy-d:  #122844;
@@ -17,6 +16,7 @@
   --fg:      #1A1A1A;
   --muted:   #6A6A6A;
   --border:  #E0DFDB;
+  --tab-h:   52px;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -76,6 +76,53 @@ body {
   line-height: 1.3;
   text-wrap: balance;
 }
+.hd-date {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 4px;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-left: max(0px, env(safe-area-inset-left,0px));
+  padding-right: max(0px, env(safe-area-inset-right,0px));
+}
+.tab {
+  flex: 1;
+  height: var(--tab-h);
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.45);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  position: relative;
+  transition: color 0.15s;
+  letter-spacing: 0.01em;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab.on { color: white; }
+.tab.on::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 15%; right: 15%;
+  height: 2.5px;
+  background: white;
+  border-radius: 2px 2px 0 0;
+}
+.tab-sub {
+  font-size: 9px;
+  font-weight: 400;
+  opacity: 0.75;
+}
 
 /* ── Main ── */
 main {
@@ -132,6 +179,7 @@ main {
   position: absolute;
   pointer-events: none;
   transform: translate(-50%, -50%);
+  /* left/top set inline */
 }
 .arrow-wrap svg {
   filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
@@ -179,7 +227,6 @@ main {
 }
 
 .pending-panel { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.55); font-size:15px; font-weight:500; letter-spacing:0.04em; background:#1B1B1A; }
-
 /* ── Caption strip ── */
 .caption {
   flex-shrink: 0;
@@ -226,7 +273,7 @@ main {
   width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--border);
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s, transform 0.2s, width 0.2s;
   flex-shrink: 0;
 }
 .dot.on { background: var(--navy); transform: scale(1.3); }
@@ -258,32 +305,58 @@ main {
 .nav-btn:active { transform: scale(0.97); }
 .nav-btn:disabled { opacity: 0.25; cursor: default; }
 .nav-btn:disabled:active { transform: none; }
-.btn-prev { flex: 0 0 100px; background: var(--bg); color: var(--fg); }
-.btn-next { flex: 1; background: var(--navy); color: white; }
-.btn-next.dest-btn { background: var(--dest); }
+.btn-prev {
+  flex: 0 0 100px;
+  background: var(--bg);
+  color: var(--fg);
+}
+.btn-next {
+  flex: 1;
+  background: var(--navy);
+  color: white;
+}
+.btn-next.dest-btn {
+  background: var(--dest);
+}
+
+/* ── Swipe hint ── */
+.swipe-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.6);
+  pointer-events: none;
+  z-index: 3;
+}
 </style>
-</head>
-<body>
 
 <div class="hd">
   <div class="hd-cover">
     <div class="hd-title">아산 프론티어 아카데미 15기 수료식<br>아산정책연구원 → 팜시티테이블 도보 안내</div>
   </div>
-</div>
+  </div>
 
 <main id="main"></main>
 
 <script>
-const STEPS = [
-  { img:'photos/r1_01.jpg', landmark:'STEP 1 · 아산정책연구원 앞', inst:'정문 나와서 직진', sub:'아산정책연구원 정문을 나와 앞 도로를 따라 직진하세요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r1_02.jpg', landmark:'STEP 2 · 경회궁1가길 표지판', inst:'경회궁1가길 표지판 → 골목으로 직진', sub:'파란색 "경회궁1가길" 표지판이 보이면 그 방향으로 계속 직진하세요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r1_03.jpg', landmark:'STEP 3 · 막히도로 표시', inst:'"막히도로" 표시 무시하고 직진', sub:'도로에 "막히도로" 표시가 있어도 보행자는 통행 가능합니다. TAPAMADRE 카페가 보이면 맞는 길입니다.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r1_04.jpg', landmark:'STEP 4 · 주차금지 표시 & 삼거리', inst:'삼거리에서 계속 직진', sub:'주차금지 표시와 가을 나무가 있는 삼거리입니다. 오른쪽으로 꺾지 말고 계속 직진하세요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r1_05.jpg', landmark:'STEP 5 · 축구회관 KFA HOUSE', inst:'KFA 축구회관 지나 직진', sub:'"축구회관 KFA HOUSE" 건물이 오른쪽에 보이면 맞는 방향입니다. 옆을 지나 계속 직진하세요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r1_06.jpg', landmark:'STEP 6 · 큰 도로 & 횡단보도', inst:'횡단보도 건너기', sub:'큰 도로가 나옵니다. 횡단보도를 건너 반대편으로 이동하세요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r1_07.jpg', landmark:'STEP 7 · 팜시티테이블 담장', inst:'꽃무늬 담장 따라 올라가기 — 거의 도착!', sub:'팜시티테이블 건물의 꽃무늬 담장이 보입니다! 담장을 따라 계속 올라가세요. 거의 다 왔어요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r1_08.jpg', landmark:'도착', inst:'팜시티테이블 도착!', sub:'"팜시티테이블" 현수막이 보이면 도착입니다. 입구로 들어가시면 안내해 드립니다. 🎉', dir:'dest' },
+/* ── Route data ── */
+const ROUTES = [
+  {
+    id: 'r1',
+    steps: [
+      { img:'photos/w1_yeonguwon.webp', landmark:'STEP 1 · 아산정책연구원 앞', inst:'오른쪽 오르막길로', sub:'연구원 앞 도로에서 오른쪽 위로 올라가세요.', dir:'up', ax:68, ay:72, rot:50 },
+      { img:'photos/w2_ivy.webp', landmark:'STEP 2 · 초록 담벼락', inst:'담벼락 따라 직진', sub:'초록 담쟁이 담벼락을 따라 계속 올라가세요.', dir:'up', ax:56, ay:68, rot:12 },
+      { img:'photos/w3_sajegwan.webp', landmark:'STEP 3 · 세종로성당 사제관', inst:'사제관 앞 직진', sub:'\"세종로성당 사제관\" 건물을 지나 계속 직진하세요.', dir:'up', ax:62, ay:66, rot:12 },
+      { img:'photos/w4_stairs_house.webp', landmark:'STEP 4 · 돌 조각 계단 집', inst:'계단 있는 집 지나 직진', sub:'돌 조각이 놓인 계단 앞을 지나 좁아지는 길로 가세요.', dir:'up', ax:56, ay:68, rot:28 },
+      { img:'photos/w5_shutter.webp', landmark:'STEP 5 · 알록달록 셔터', inst:'셔터 지나 직진', sub:'멀리 입간판이 서 있는 철문이 보입니다.', dir:'up', ax:60, ay:66, rot:20 },
+      { img:'photos/w6_gate.webp', landmark:'STEP 6 · 입간판 있는 철문', inst:'입간판 있는 문으로', sub:'분홍색 주차금지 표지 오른쪽, \"FARM CITY Table\" 입간판이 서 있는 철문으로 들어가세요.', dir:'right', ax:60, ay:68 },
+      { img:'photos/w7_entrance.jpg', landmark:'STEP 7 · 팜시티테이블 입구', inst:'계단 내려가 오른쪽 문으로', sub:'철문 안 계단을 내려가 오른쪽 문으로 들어오면 푸른 조명의 팜시티테이블 입구가 보입니다. 리셉션에서 말씀하시면 자리를 안내해 드립니다.', dir:'up', ax:50, ay:68 },
+    ]
+  }
 ];
+
+/* ── Arrow SVG builder ── */
 function arrowSVG(dir) {
   if (dir === 'wait') return '';
   if (dir === 'dest') {
@@ -294,6 +367,8 @@ function arrowSVG(dir) {
       <path d="M24 40 L35 52 L57 28" stroke="#28C659" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
   }
+
+  /* Path data per direction */
   const paths = {
     up:    'M40 68 L40 18 M20 38 L40 18 L60 38',
     down:  'M40 12 L40 62 M20 42 L40 62 L60 42',
@@ -301,91 +376,135 @@ function arrowSVG(dir) {
     left:  'M66 40 L16 40 M36 20 L16 40 L36 60',
   };
   const d = paths[dir] || paths.up;
+
   return `<svg width="90" height="90" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="${d}" stroke="white" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="${d}" stroke="#FF3528" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 }
 
+/* ── Render routes ── */
 const main = document.getElementById('main');
-let cur = 0;
+let routeStates = {}; /* { r1: 0, r2: 0 } */
 
-const panel = document.createElement('div');
-panel.className = 'route on';
+ROUTES.forEach(route => {
+  routeStates[route.id] = 0;
 
-const ss = document.createElement('div');
-ss.className = 'slideshow';
+  const panel = document.createElement('div');
+  panel.className = 'route' + ' on';
+  panel.id = 'panel-' + route.id;
 
-STEPS.forEach((step, i) => {
-  const slide = document.createElement('div');
-  slide.className = 'slide' + (i === 0 ? ' on' : '');
+  /* Slideshow */
+  const ss = document.createElement('div');
+  ss.className = 'slideshow';
 
-  const dest = step.dir === 'dest';
-  slide.innerHTML = `
-    <div class="photo-wrap">
-      ${step.img ? `<img src="${step.img}" alt="${step.landmark}" draggable="false" loading="${i === 0 ? 'eager' : 'lazy'}">` : `<div class="pending-panel">사진 준비 중</div>`}
-      <div class="step-badge">${dest ? '✓' : `${i+1} / ${STEPS.length}`}</div>
-      ${dest
-        ? `<div class="dest-badge"><div class="dest-ring">${arrowSVG('dest')}</div></div>`
-        : `<div class="arrow-wrap" style="left:${step.ax}%;top:${step.ay}%${step.rot?' ;transform:translate(-50%,-50%) rotate('+step.rot+'deg)':''}">${arrowSVG(step.dir)}</div>`
-      }
-    </div>
-    <div class="caption${dest ? ' dest' : ''}">
-      <div class="cap-landmark">${step.landmark}</div>
-      <div class="cap-inst${dest ? ' dest-text' : ''}">${step.inst}</div>
-      <div class="cap-sub">${step.sub}</div>
-    </div>
+  route.steps.forEach((step, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'slide' + (i === 0 ? ' on' : '');
+    slide.id = `${route.id}-slide-${i}`;
+
+    const dest = step.dir === 'dest';
+
+    slide.innerHTML = `
+      <div class="photo-wrap" id="pw-${route.id}-${i}">
+        ${step.img ? `<img src="${step.img}" alt="${step.landmark}" draggable="false" loading="${i === 0 ? 'eager' : 'lazy'}">` : `<div class="pending-panel">사진 준비 중</div>`}
+        <div class="step-badge">${dest ? '✓' : `${i+1} / ${route.steps.length}`}</div>
+        ${dest
+          ? `<div class="dest-badge"><div class="dest-ring">${arrowSVG('dest')}</div></div>`
+          : step.dir === 'wait' ? '' : `<div class="arrow-wrap" style="left:${step.ax}%;top:${step.ay}%;transform:translate(-50%,-50%)${step.rot?' rotate('+step.rot+'deg)':''}">${arrowSVG(step.dir)}</div>`
+        }
+      </div>
+      <div class="caption${dest ? ' dest' : ''}">
+        <div class="cap-landmark">${step.landmark}</div>
+        <div class="cap-inst${dest ? ' dest-text' : ''}">${step.inst}</div>
+        <div class="cap-sub">${step.sub}</div>
+      </div>
+    `;
+    ss.appendChild(slide);
+  });
+
+  panel.appendChild(ss);
+
+  /* Dots */
+  const dotsDiv = document.createElement('div');
+  dotsDiv.className = 'dots';
+  dotsDiv.id = 'dots-' + route.id;
+  route.steps.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    dotsDiv.appendChild(d);
+  });
+  panel.appendChild(dotsDiv);
+
+  /* Nav bar */
+  const nav = document.createElement('div');
+  nav.className = 'nav-bar';
+  nav.innerHTML = `
+    <button class="nav-btn btn-prev" id="prev-${route.id}" onclick="go('${route.id}',-1)" disabled>‹ 이전</button>
+    <button class="nav-btn btn-next" id="next-${route.id}" onclick="go('${route.id}',1)">다음 ›</button>
   `;
-  ss.appendChild(slide);
+  panel.appendChild(nav);
+
+  main.appendChild(panel);
+
+  /* Touch/swipe */
+  let tx = 0;
+  ss.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  ss.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) go(route.id, dx < 0 ? 1 : -1);
+  }, { passive: true });
 });
 
-panel.appendChild(ss);
+function go(routeId, delta) {
+  const route = ROUTES.find(r => r.id === routeId);
+  const cur = routeStates[routeId];
+  const next = Math.max(0, Math.min(route.steps.length - 1, cur + delta));
+  if (next === cur) return;
 
-const dotsDiv = document.createElement('div');
-dotsDiv.className = 'dots';
-STEPS.forEach((_, i) => {
-  const d = document.createElement('div');
-  d.className = 'dot' + (i === 0 ? ' on' : '');
-  dotsDiv.appendChild(d);
-});
-panel.appendChild(dotsDiv);
+  /* Hide current */
+  document.getElementById(`${routeId}-slide-${cur}`).classList.remove('on');
+  /* Show next */
+  document.getElementById(`${routeId}-slide-${next}`).classList.add('on');
 
-const nav = document.createElement('div');
-nav.className = 'nav-bar';
-nav.innerHTML = `
-  <button class="nav-btn btn-prev" id="btn-prev" onclick="go(-1)" disabled>‹ 이전</button>
-  <button class="nav-btn btn-next" id="btn-next" onclick="go(1)">다음 ›</button>
-`;
-panel.appendChild(nav);
-main.appendChild(panel);
-
-function go(delta) {
-  const slides = ss.querySelectorAll('.slide');
-  const dots   = dotsDiv.querySelectorAll('.dot');
-  slides[cur].classList.remove('on');
+  /* Update dots */
+  const dots = document.querySelectorAll(`#dots-${routeId} .dot`);
   dots[cur].classList.remove('on');
-  cur = Math.max(0, Math.min(STEPS.length - 1, cur + delta));
-  slides[cur].classList.add('on');
-  dots[cur].classList.add('on');
-  const isLast = cur === STEPS.length - 1;
-  document.getElementById('btn-prev').disabled = cur === 0;
-  const btn = document.getElementById('btn-next');
-  btn.textContent = isLast ? '처음으로' : '다음 ›';
-  btn.className = 'nav-btn btn-next' + (isLast ? ' dest-btn' : '');
-  btn.onclick = isLast ? () => go(-(STEPS.length - 1)) : () => go(1);
+  dots[next].classList.add('on');
+
+  /* Update buttons */
+  document.getElementById(`prev-${routeId}`).disabled = next === 0;
+  const nextBtn = document.getElementById(`next-${routeId}`);
+  const isLast = next === route.steps.length - 1;
+  nextBtn.textContent = isLast ? '처음으로' : '다음 ›';
+  nextBtn.className = 'nav-btn btn-next' + (isLast ? ' dest-btn' : '');
+  if (isLast) {
+    nextBtn.onclick = () => go(routeId, -(route.steps.length - 1));
+  } else {
+    nextBtn.onclick = () => go(routeId, 1);
+  }
+
+  routeStates[routeId] = next;
 }
 
-let tx = 0;
-ss.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
-ss.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - tx;
-  if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
-}, { passive: true });
+function switchRoute(id) {
+  /* Tabs */
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('on', t.dataset.route === id);
+  });
+  /* Panels */
+  document.querySelectorAll('.route').forEach(p => {
+    p.classList.toggle('on', p.id === 'panel-' + id);
+  });
+}
 
+/* Keyboard nav */
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+  const activeId = document.querySelector('.route.on')?.id.replace('panel-', '');
+  if (!activeId) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(activeId, 1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(activeId, -1);
 });
 </script>
-</body>
-</html>
+
+</body></html>
