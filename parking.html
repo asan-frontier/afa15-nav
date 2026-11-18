@@ -3,54 +3,62 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>주차장 → 행사장 길 안내</title>
+<title>주차장에서 연구원</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <style>
 :root {
-  --navy:   #1A3966;
-  --navy-d: #122844;
-  --dest:   #28C659;
-  --bg:     #F2F1EE;
-  --surface:#FFFFFF;
-  --fg:     #1A1A1A;
-  --muted:  #6A6A6A;
-  --border: #E0DFDB;
+  --navy:    #1A3966;
+  --navy-d:  #122844;
+  --arrow:   #FF3528;
+  --dest:    #28C659;
+  --bg:      #F2F1EE;
+  --surface: #FFFFFF;
+  --fg:      #1A1A1A;
+  --muted:   #6A6A6A;
+  --border:  #E0DFDB;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg:     #111110;
-    --surface:#1E1E1C;
-    --fg:     #EDEDE8;
-    --muted:  #9A9994;
-    --border: #2E2E2B;
+    --bg:      #111110;
+    --surface: #1E1E1C;
+    --fg:      #EDEDE8;
+    --muted:   #9A9994;
+    --border:  #2E2E2B;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg:     #111110;
-  --surface:#1E1E1C;
-  --fg:     #EDEDE8;
-  --muted:  #9A9994;
-  --border: #2E2E2B;
+  --bg:      #111110;
+  --surface: #1E1E1C;
+  --fg:      #EDEDE8;
+  --muted:   #9A9994;
+  --border:  #2E2E2B;
   color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
 
 body {
   font-family: 'Noto Sans KR', sans-serif;
   background: var(--bg);
   color: var(--fg);
-  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: none;
 }
 
 /* ── Header ── */
 .hd {
   background: var(--navy);
   color: white;
-  padding: 18px max(16px, env(safe-area-inset-left,0px));
+  flex-shrink: 0;
+}
+.hd-cover {
+  padding: 18px max(16px, env(safe-area-inset-left,0px)) 14px;
+  padding-left: max(16px, env(safe-area-inset-left,0px));
   padding-right: max(16px, env(safe-area-inset-right,0px));
   text-align: center;
 }
@@ -62,38 +70,55 @@ body {
   color: rgba(255,255,255,0.55);
   margin-bottom: 5px;
 }
-.hd-title { font-size: 17px; font-weight: 700; line-height: 1.3; }
-.hd-sub   { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
-
-/* ── Main ── */
-main { overflow-y: auto; background: var(--bg); }
-
-.route {
-  max-width: 520px;
-  margin: 0 auto;
-  padding-bottom: max(20px, env(safe-area-inset-bottom,0px));
+.hd-title {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.hd-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
 }
 
-@media (min-width: 480px) {
-  main { padding: 20px 16px 0; }
-  .route {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-    margin-bottom: 32px;
-  }
+/* ── Main ── */
+main {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Route panel ── */
+.route {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  flex-direction: column;
 }
 
 /* ── Slideshow ── */
-.slideshow { background: #0A0A0A; }
-.slide { display: none; flex-direction: column; }
+.slideshow {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: #0A0A0A;
+}
+.slide {
+  display: none;
+  position: absolute;
+  inset: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
 .slide.on { display: flex; }
 
-/* ── Photo ── */
+/* ── Photo wrap ── */
 .photo-wrap {
+  flex: 1;
+  min-height: 0;
   position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 4;
   overflow: hidden;
   background: #111;
 }
@@ -105,23 +130,24 @@ main { overflow-y: auto; background: var(--bg); }
   pointer-events: none;
   user-select: none;
 }
-.no-photo {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  color: rgba(255,255,255,0.35);
-  font-size: 13px;
+
+/* ── Arrow overlay ── */
+.arrow-wrap {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+.arrow-wrap svg {
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
 }
 
-/* ── Step badge (top-left) ── */
+/* ── Step badge ── */
 .step-badge {
   position: absolute;
-  top: 12px; left: 12px;
-  min-width: 32px; height: 32px;
+  top: 12px;
+  left: 12px;
+  min-width: 32px;
+  height: 32px;
   padding: 0 10px;
   background: var(--navy-d);
   color: white;
@@ -136,35 +162,35 @@ main { overflow-y: auto; background: var(--bg); }
   z-index: 2;
 }
 
-/* ── Direction badge (bottom-right) ── */
-.dir-badge {
+/* ── Dest badge ── */
+.dest-badge {
   position: absolute;
-  bottom: 12px; right: 12px;
-  background: rgba(0,0,0,0.78);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1.5px solid rgba(255,255,255,0.22);
-  border-radius: 20px;
-  padding: 7px 14px 7px 10px;
+  inset: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
   pointer-events: none;
-  z-index: 3;
+  z-index: 2;
 }
-.dir-badge.dest {
-  background: rgba(10,70,25,0.88);
-  border-color: rgba(40,198,89,0.5);
+.dest-ring {
+  width: 80px; height: 80px;
+  background: rgba(0,0,0,0.55);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
 }
-.dir-icon { font-size: 20px; line-height: 1; }
-.dir-text { font-size: 14px; font-weight: 700; color: white; letter-spacing: 0.01em; }
 
-/* ── Caption ── */
+.pending-panel { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.55); font-size:15px; font-weight:500; letter-spacing:0.04em; background:#1B1B1A; }
+
+/* ── Caption strip ── */
 .caption {
+  flex-shrink: 0;
   background: var(--surface);
-  padding: 14px max(16px, env(safe-area-inset-right,0px)) 14px max(16px, env(safe-area-inset-left,0px));
+  padding: 14px max(16px, env(safe-area-inset-right,0px)) 12px max(16px, env(safe-area-inset-left,0px));
   border-top: 1px solid var(--border);
-  min-height: 100px;
+  min-height: 90px;
 }
 .cap-landmark {
   font-size: 10px;
@@ -175,25 +201,26 @@ main { overflow-y: auto; background: var(--bg); }
   margin-bottom: 4px;
 }
 .cap-inst {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   line-height: 1.25;
   color: var(--fg);
+  text-wrap: balance;
 }
 .cap-inst.dest-text { color: var(--dest); }
 .cap-sub {
   font-size: 12.5px;
   color: var(--muted);
   margin-top: 5px;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 /* ── Progress dots ── */
 .dots {
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
   gap: 6px;
   padding: 8px 16px 6px;
   background: var(--surface);
@@ -208,8 +235,9 @@ main { overflow-y: auto; background: var(--bg); }
 }
 .dot.on { background: var(--navy); transform: scale(1.3); }
 
-/* ── Nav ── */
+/* ── Nav bar ── */
 .nav-bar {
+  flex-shrink: 0;
   display: flex;
   gap: 10px;
   padding: 10px max(16px, env(safe-area-inset-right,0px)) max(14px, calc(env(safe-area-inset-bottom,0px) + 10px));
@@ -229,8 +257,9 @@ main { overflow-y: auto; background: var(--bg); }
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
 }
-.nav-btn:active  { transform: scale(0.97); }
+.nav-btn:active { transform: scale(0.97); }
 .nav-btn:disabled { opacity: 0.25; cursor: default; }
 .nav-btn:disabled:active { transform: none; }
 .btn-prev { flex: 0 0 100px; background: var(--bg); color: var(--fg); }
@@ -241,136 +270,127 @@ main { overflow-y: auto; background: var(--bg); }
 <body>
 
 <div class="hd">
-  <div class="hd-label">아산 프론티어 아카데미 15기</div>
-  <div class="hd-title">팜시티 주차장 → 아산정책연구원</div>
-  <div class="hd-sub">행사장 오시는 길 · 주차 이용자 전용</div>
+  <div class="hd-cover">
+    <div class="hd-label">아산 프론티어 아카데미 15기</div>
+    <div class="hd-title">팜시티 주차장 → 아산정책연구원</div>
+    <div class="hd-sub">주차 이용자 전용 안내</div>
+  </div>
 </div>
 
-<main>
-  <div class="route">
-    <div class="slideshow" id="ss"></div>
-    <div class="dots" id="dots"></div>
-    <div class="nav-bar">
-      <button class="nav-btn btn-prev" id="btn-prev" onclick="go(-1)" disabled>‹ 이전</button>
-      <button class="nav-btn btn-next" id="btn-next" onclick="go(1)">다음 ›</button>
-    </div>
-  </div>
-</main>
+<main id="main"></main>
 
 <script>
 const STEPS = [
-  {
-    img: 'photos/r2_01.jpg',
-    landmark: 'STEP 1 · 팜시티 주차장 입구',
-    inst: '차단기 통과 후 B2에 주차',
-    sub: '"FARM CITY" 주차장 표지판이 있는 차단기를 통과해 지하 B2에 주차하세요.',
-    icon: '🚗', dir: '진입'
-  },
-  {
-    img: 'photos/r2_02.jpg',
-    landmark: 'STEP 2 · 건물 출구 → 경사로',
-    inst: '건물 나와 경사로 따라 내려가기',
-    sub: '주차 후 건물 밖으로 나오면 팜시티테이블 담장을 옆에 두고 경사로를 따라 내려가세요. 가을 나무가 보이면 맞는 길입니다.',
-    icon: '⬇', dir: '직진 · 내려가기'
-  },
-  {
-    img: 'photos/r2_03.jpg',
-    landmark: 'STEP 3 · 한미술관 사거리',
-    inst: '한미술관 표지판 지나 골목으로 직진',
-    sub: '왼쪽에 "한미술관" 표지판이 보이는 사거리입니다. 오른쪽이나 왼쪽으로 꺾지 말고 앞 골목으로 계속 직진하세요.',
-    icon: '⬆', dir: '직진'
-  },
-  {
-    img: 'photos/r2_04.jpg',
-    landmark: 'STEP 4 · 어린이보호구역 골목',
-    inst: '어린이보호구역 표시 지나 계속 올라가기',
-    sub: '도로에 "어린이보호구역" 글씨가 보이면 맞는 길입니다. 붉은 벽돌 건물을 오른쪽에 두고 계속 올라가세요.',
-    icon: '⬆', dir: '직진 · 올라가기'
-  },
-  {
-    img: 'photos/r2_05.jpg',
-    landmark: 'STEP 5 · emuoa 모퉁이',
-    inst: 'emuoa 간판 모퉁이 지나 계속 올라가기',
-    sub: '왼쪽에 "emuoa" 음악 가게 간판이 보이는 모퉁이입니다. HDC 건물 아래를 지나 계속 직진해 올라가세요.',
-    icon: '⬆', dir: '직진 · 올라가기'
-  },
-  {
-    img: 'photos/r2_06.jpg',
-    landmark: '도착',
-    inst: '아산정책연구원 도착!',
-    sub: '"아산정책연구원 / THE ASAN INSTITUTE FOR POLICY STUDIES" 금색 현판이 보이면 도착입니다. 정문으로 들어가세요. 🎉',
-    icon: '🏁', dir: '도착!', isDest: true
-  }
+  { img:'photos/r2_01.jpg', landmark:'STEP 1 · 팜시티 주차장 입구', inst:'차단기 통과 후 B2에 주차', sub:'"FARM CITY" 주차장 표지판이 있는 차단기를 통과해 지하 B2에 주차하세요.', dir:'up', ax:50, ay:68 },
+  { img:'photos/r2_02.jpg', landmark:'STEP 2 · 건물 출구 → 경사로', inst:'건물 나와 경사로 따라 내려가기', sub:'주차 후 건물 밖으로 나오면 팜시티테이블 담장을 옆에 두고 경사로를 따라 내려가세요. 가을 나무가 보이면 맞는 길입니다.', dir:'down', ax:50, ay:68 },
+  { img:'photos/r2_03.jpg', landmark:'STEP 3 · 한미술관 사거리', inst:'한미술관 표지판 지나 골목으로 직진', sub:'왼쪽에 "한미술관" 표지판이 보이는 사거리입니다. 오른쪽이나 왼쪽으로 꺾지 말고 앞 골목으로 계속 직진하세요.', dir:'up', ax:50, ay:68 },
+  { img:'photos/r2_04.jpg', landmark:'STEP 4 · 어린이보호구역 골목', inst:'어린이보호구역 표시 지나 계속 올라가기', sub:'도로에 "어린이보호구역" 글씨가 보이면 맞는 길입니다. 붉은 벽돌 건물을 오른쪽에 두고 계속 올라가세요.', dir:'up', ax:50, ay:68 },
+  { img:'photos/r2_05.jpg', landmark:'STEP 5 · emuoa 모퉁이', inst:'emuoa 간판 모퉁이 지나 계속 올라가기', sub:'왼쪽에 "emuoa" 음악 가게 간판이 보이는 모퉁이입니다. HDC 건물 아래를 지나 계속 직진해 올라가세요.', dir:'up', ax:50, ay:68 },
+  { img:'photos/r2_06.jpg', landmark:'도착', inst:'아산정책연구원 도착!', sub:'"아산정책연구원 / THE ASAN INSTITUTE FOR POLICY STUDIES" 금색 현판이 보이면 도착입니다. 정문으로 들어가세요. 🎉', dir:'dest' },
 ];
 
+function arrowSVG(dir) {
+  if (dir === 'wait') return '';
+  if (dir === 'dest') {
+    return `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="40" r="34" fill="rgba(0,0,0,0.6)"/>
+      <circle cx="40" cy="40" r="34" stroke="white" stroke-width="3" stroke-opacity="0.3"/>
+      <path d="M24 40 L35 52 L57 28" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M24 40 L35 52 L57 28" stroke="#28C659" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  }
+  const paths = {
+    up:    'M40 68 L40 18 M20 38 L40 18 L60 38',
+    down:  'M40 12 L40 62 M20 42 L40 62 L60 42',
+    right: 'M14 40 L64 40 M44 20 L64 40 L44 60',
+    left:  'M66 40 L16 40 M36 20 L16 40 L36 60',
+  };
+  const d = paths[dir] || paths.up;
+  return `<svg width="90" height="90" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="${d}" stroke="white" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${d}" stroke="#FF3528" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+const main = document.getElementById('main');
 let cur = 0;
-const ss      = document.getElementById('ss');
-const dotsEl  = document.getElementById('dots');
-const prevBtn = document.getElementById('btn-prev');
-const nextBtn = document.getElementById('btn-next');
+
+const panel = document.createElement('div');
+panel.className = 'route';
+
+const ss = document.createElement('div');
+ss.className = 'slideshow';
 
 STEPS.forEach((step, i) => {
   const slide = document.createElement('div');
   slide.className = 'slide' + (i === 0 ? ' on' : '');
 
+  const dest = step.dir === 'dest';
   slide.innerHTML = `
     <div class="photo-wrap">
-      ${step.img
-        ? `<img src="${step.img}" alt="${step.landmark}" draggable="false" loading="${i===0?'eager':'lazy'}">`
-        : `<div class="no-photo"><span style="font-size:44px">📷</span><span>사진 준비 중</span></div>`
+      ${step.img ? `<img src="${step.img}" alt="${step.landmark}" draggable="false" loading="${i === 0 ? 'eager' : 'lazy'}">` : `<div class="pending-panel">사진 준비 중</div>`}
+      <div class="step-badge">${dest ? '✓' : `${i+1} / ${STEPS.length}`}</div>
+      ${dest
+        ? `<div class="dest-badge"><div class="dest-ring">${arrowSVG('dest')}</div></div>`
+        : `<div class="arrow-wrap" style="left:${step.ax}%;top:${step.ay}%${step.rot?' ;transform:translate(-50%,-50%) rotate('+step.rot+'deg)':''}">${arrowSVG(step.dir)}</div>`
       }
-      <div class="step-badge">${step.isDest ? '✓' : `${i+1} / ${STEPS.length}`}</div>
-      <div class="dir-badge${step.isDest ? ' dest' : ''}">
-        <span class="dir-icon">${step.icon}</span>
-        <span class="dir-text">${step.dir}</span>
-      </div>
     </div>
-    <div class="caption">
+    <div class="caption${dest ? ' dest' : ''}">
       <div class="cap-landmark">${step.landmark}</div>
-      <div class="cap-inst${step.isDest ? ' dest-text' : ''}">${step.inst}</div>
+      <div class="cap-inst${dest ? ' dest-text' : ''}">${step.inst}</div>
       <div class="cap-sub">${step.sub}</div>
     </div>
   `;
   ss.appendChild(slide);
-
-  const dot = document.createElement('div');
-  dot.className = 'dot' + (i === 0 ? ' on' : '');
-  dotsEl.appendChild(dot);
 });
 
-function updateNav() {
-  prevBtn.disabled = cur === 0;
-  const isLast = cur === STEPS.length - 1;
-  nextBtn.textContent = isLast ? '처음으로' : '다음 ›';
-  nextBtn.className = 'nav-btn btn-next' + (isLast ? ' dest-btn' : '');
-  nextBtn.onclick = isLast ? () => go(-(STEPS.length - 1)) : () => go(1);
-}
+panel.appendChild(ss);
+
+const dotsDiv = document.createElement('div');
+dotsDiv.className = 'dots';
+STEPS.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  dotsDiv.appendChild(d);
+});
+panel.appendChild(dotsDiv);
+
+const nav = document.createElement('div');
+nav.className = 'nav-bar';
+nav.innerHTML = `
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="go(-1)" disabled>‹ 이전</button>
+  <button class="nav-btn btn-next" id="btn-next" onclick="go(1)">다음 ›</button>
+`;
+panel.appendChild(nav);
+main.appendChild(panel);
 
 function go(delta) {
   const slides = ss.querySelectorAll('.slide');
-  const dots   = dotsEl.querySelectorAll('.dot');
+  const dots   = dotsDiv.querySelectorAll('.dot');
   slides[cur].classList.remove('on');
   dots[cur].classList.remove('on');
   cur = Math.max(0, Math.min(STEPS.length - 1, cur + delta));
   slides[cur].classList.add('on');
   dots[cur].classList.add('on');
-  updateNav();
+  const isLast = cur === STEPS.length - 1;
+  document.getElementById('btn-prev').disabled = cur === 0;
+  const btn = document.getElementById('btn-next');
+  btn.textContent = isLast ? '처음으로' : '다음 ›';
+  btn.className = 'nav-btn btn-next' + (isLast ? ' dest-btn' : '');
+  btn.onclick = isLast ? () => go(-(STEPS.length - 1)) : () => go(1);
 }
 
-/* Touch swipe */
 let tx = 0;
 ss.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
-ss.addEventListener('touchend',   e => {
+ss.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - tx;
   if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
 }, { passive: true });
 
-/* Keyboard */
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
   if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
 });
 </script>
-
 </body>
 </html>
