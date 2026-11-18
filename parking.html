@@ -271,9 +271,7 @@ main {
 
 <div class="hd">
   <div class="hd-cover">
-    <div class="hd-label">아산 프론티어 아카데미 15기</div>
-    <div class="hd-title">팜시티 주차장 → 아산정책연구원</div>
-    <div class="hd-sub">주차 이용자 전용 안내</div>
+    <div class="hd-title">아산 프론티어 아카데미 15기 수료식<br>팜시티 주차장 → 아산정책연구원 안내</div>
   </div>
 </div>
 
@@ -281,14 +279,17 @@ main {
 
 <script>
 const STEPS = [
-  { img:'photos/r2_01.jpg', landmark:'STEP 1 · 팜시티 주차장 입구', inst:'차단기 통과 후 B2에 주차', sub:'"FARM CITY" 주차장 표지판이 있는 차단기를 통과해 지하 B2에 주차하세요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r2_02.jpg', landmark:'STEP 2 · 건물 출구 → 경사로', inst:'건물 나와 경사로 따라 내려가기', sub:'주차 후 건물 밖으로 나오면 팜시티테이블 담장을 옆에 두고 경사로를 따라 내려가세요. 가을 나무가 보이면 맞는 길입니다.', dir:'down', ax:50, ay:68 },
-  { img:'photos/r2_03.jpg', landmark:'STEP 3 · 한미술관 사거리', inst:'한미술관 표지판 지나 골목으로 직진', sub:'왼쪽에 "한미술관" 표지판이 보이는 사거리입니다. 오른쪽이나 왼쪽으로 꺾지 말고 앞 골목으로 계속 직진하세요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r2_04.jpg', landmark:'STEP 4 · 어린이보호구역 골목', inst:'어린이보호구역 표시 지나 계속 올라가기', sub:'도로에 "어린이보호구역" 글씨가 보이면 맞는 길입니다. 붉은 벽돌 건물을 오른쪽에 두고 계속 올라가세요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r2_05.jpg', landmark:'STEP 5 · emuoa 모퉁이', inst:'emuoa 간판 모퉁이 지나 계속 올라가기', sub:'왼쪽에 "emuoa" 음악 가게 간판이 보이는 모퉁이입니다. HDC 건물 아래를 지나 계속 직진해 올라가세요.', dir:'up', ax:50, ay:68 },
-  { img:'photos/r2_06.jpg', landmark:'도착', inst:'아산정책연구원 도착!', sub:'"아산정책연구원 / THE ASAN INSTITUTE FOR POLICY STUDIES" 금색 현판이 보이면 도착입니다. 정문으로 들어가세요. 🎉', dir:'dest' },
+  { img:'photos/p00_ramp.jpg', landmark:'STEP 1 · 주차장 앞 경사로', inst:'경사로를 올라가 주차장으로', sub:'큰길에서 이 경사로를 따라 올라가면 주차장 입구가 나옵니다. 사진은 내려가는 방향에서 찍은 모습입니다.', dir:'down', ax:45, ay:76 },
+  { img:'photos/p0_entrance.webp', landmark:'STEP 2 · 팜시티 주차장 입구', inst:'주차장 입구로 진입', sub:'"리제로 서울 주차장" 입구입니다. 차단기를 지나 지하(B2)에 주차하세요.', dir:'up', ax:55, ay:76 },
+  { img:'photos/p1_b2_parking.jpg', landmark:'STEP 3 · 팜시티 주차장 B2', inst:'정면 유리문 안쪽 엘리베이터로', sub:'정면 안쪽의 유리문(현수막이 붙은 문)으로 들어가 엘리베이터를 타고 B1(지하 1층)로 올라가세요.', dir:'up', ax:53, ay:72 },
+  { img:'photos/p2_elevator.jpg', landmark:'STEP 4 · B1 엘리베이터 앞', inst:'내려서 오른쪽으로 돌기', sub:'B1에서 내려 오른쪽으로 도세요. (사진은 엘리베이터를 바라본 모습이라 오른쪽이 사진의 왼쪽입니다.)', dir:'left', ax:30, ay:80 },
+  { img:'photos/p3_b1_lobby.jpg', landmark:'STEP 5 · B1 로비', inst:'가운데 유리문으로 나가기', sub:'오른쪽으로 돌면 보이는 로비입니다. 정면 가운데 유리문으로 나가면 건물 밖입니다.', dir:'up', ax:57, ay:78 },
+  { img:'photos/w6_gate.webp', landmark:'STEP 6 · 입간판 있는 철문 앞', inst:'왼쪽 계단 올라가 이 길로', sub:'건물 밖 왼쪽 계단을 올라온 뒤, 이 길을 따라 내려가세요. 사진은 올라가는 방향에서 찍은 모습입니다.', dir:'down', ax:45, ay:78 },
+  { img:'photos/w5_shutter.webp', landmark:'STEP 7 · 알록달록 셔터', inst:'셔터 지나 계속 내려가기', sub:'알록달록한 셔터가 보이는 길을 지나 계속 내려가세요.', dir:'down', ax:50, ay:78 },
+  { img:'photos/w4_stairs_house.webp', landmark:'STEP 8 · 돌 조각 계단 집', inst:'계단 있는 집 지나 내려가기', sub:'돌 조각이 놓인 계단 앞을 지나 계속 내려가세요.', dir:'down', ax:50, ay:78 },
+  { img:'photos/w3_sajegwan.webp', landmark:'STEP 9 · 세종로성당 사제관', inst:'사제관 지나 내려가기', sub:'"세종로성당 사제관" 건물을 지나 계속 내려가세요.', dir:'down', ax:50, ay:78 },
+  { img:'photos/w1_yeonguwon.webp', landmark:'도착', inst:'아산정책연구원 도착!', sub:'금색 "아산정책연구원" 글자가 보이는 건물이 도착지입니다.', dir:'dest' },
 ];
-
 function arrowSVG(dir) {
   if (dir === 'wait') return '';
   if (dir === 'dest') {
